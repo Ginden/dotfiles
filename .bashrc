@@ -58,3 +58,5 @@ PS1+="\$(git_color)\$(git_branch)"
 PS1+="\[$BLUE\]\[$RESET\]"
 
 PS1+="\[\033[01;34m\]\w\[\033[00m\]$ ";
+
+alias git-root="cd \$(git rev-parse --show-toplevel)"
