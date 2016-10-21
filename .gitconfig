@@ -1,6 +1,13 @@
 [alias]
-        ifetch = fetch -v --all
+	ifetch = fetch -v --all
         amend = commit -a --amend
         ls = log --pretty=format:"%C(yellow)%h%Cred%d\\ %Creset%s%Cblue\\ [%cn]" --decorate
         graph = log --graph --abbrev-commit --decorate --date=relative --all
         branch-status = !"git ifetch >> /dev/null && git branch -v"
+        puff = pull --ff-only
+        branches = branch -avvl
+        unstage = reset HEAD --
+        all-tags = show-ref --tags
+        
+[core]
+	excludesfile = ~/.gitignore_global
