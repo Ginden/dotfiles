@@ -60,3 +60,6 @@ PS1+="\[$BLUE\]\[$RESET\]"
 PS1+="\[\033[01;34m\]\w\[\033[00m\]$ ";
 
 alias git-root="cd \$(git rev-parse --show-toplevel)"
+alias npm-test="npm run --silent test 2>&1 | tee -a test.log"
+alias npm-coverage="npm run --silent coverage  2>&1 | tee -a test.log"
+
