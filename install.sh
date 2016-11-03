@@ -8,7 +8,7 @@ sudo apt-get install -y screenfetch chromium-browser build-essential nmap spotif
 curl -sL https://deb.nodesource.com/setup_6.x -o nodesource_setup.sh;
 sudo bash nodesource_setup.sh
 sudo npm upgrade npm -g
-npm install -g grunt gulp bower yo pm2 http-server jsome eslint;
+npm install -g grunt gulp bower yo pm2 http-server jsome eslint npmrc;
 wget -qO- https://raw.githubusercontent.com/creationix/nvm/v0.32.0/install.sh | bash;
 
 curl https://raw.githubusercontent.com/LuRsT/hr/master/hr > ~/bin/hr
