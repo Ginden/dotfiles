@@ -1,23 +1,26 @@
 [alias]
-    ifetch = fetch -v --all
-    amend = commit -a --amend
-    ls = log --pretty=format:"%C(yellow)%h%Cred%d\\ %Creset%s%Cblue\\ [%cn]" --decorate
-    graph = log --graph --abbrev-commit --decorate --date=relative --all
-    branch-status = !"git ifetch >> /dev/null && git branch -v"
-    puff = pull --ff-only
-    branches = branch -avvl
-    unstage = reset HEAD --
     all-tags = show-ref --tags
+    authors = !"git log --format='%aN' | sort -u"
+    amend = commit -a --amend
     branch-name = rev-parse --abbrev-ref HEAD
-    upstream-name = !git for-each-ref --format='%(upstream:short)' $(git symbolic-ref -q HEAD)
-    root = rev-parse --show-toplevel
-    exec = ! exec
-    publish = !"git push --set-upstream origin $(git branch-name)"
+    branch-status = !"git ifetch >> /dev/null && git branch -v"
     branches = branch -a
-    tags = tag
-    stashes = stash list
-    create-pull-request = !sh -c 'stash pull-request $0 $@'
+    branches = branch -avvl
+    empty-commit="commit --allow-empty"
+    exec = ! exec
+    graph = log --graph --abbrev-commit --decorate --date=relative --all
+    ifetch = fetch -v --all
+    ls = log --pretty=format:"%C(yellow)%h%Cred%d\\ %Creset%s%Cblue\\ [%cn]" --decorate
+    publish = !"git push --set-upstream origin $(git branch-name)"
+    puff = pull --ff-only
+    puff-all = !"(pwd | essed --map line.black.bgWhite) && git ifetch --tags --prune && git puff >> /dev/null && git pull-all"
+    pull-all = !"for b in $(git for-each-ref refs/heads --format='%(refname)') ; do (echo $b | essed --map line.yellow) ;  git checkout ${b#refs/heads/} ; git pull --ff-only ; done"
+    root = rev-parse --show-toplevel
     st = status
-        
+    stashes = stash list
+    tags = tag
+    unstage = reset HEAD --
+    upstream-name = !git for-each-ref --format='%(upstream:short)' $(git symbolic-ref -q HEAD)
+
 [core]
 	excludesfile = ~/.gitignore_global

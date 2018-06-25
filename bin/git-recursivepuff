@@ -1,0 +1,15 @@
+#!/bin/bash
+
+
+# GIT_DIRS=$(find . -name .git -type d -prune | xargs realpath);
+
+find . -name .git -type d -prune | xargs realpath | while read line
+do
+    echo $line;
+    cd $line;
+    cd ..;
+    git puff-all | grep -v "up to date";
+done
+
+# COMMANDS=$(echo $GIT_DIRS | sed 's/^/(cd /' | sed 's/$/ \&\& cd .. \&\& git puff-all);/')
+
