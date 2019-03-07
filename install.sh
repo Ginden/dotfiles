@@ -2,16 +2,47 @@
 
 mkdir "${HOME}/.npm-packages";
 mkdir "${HOME}/bin"
-sudo apt-key adv --keyserver hkp://keyserver.ubuntu.com:80 --recv-keys BBEBDCB318AD50EC6865090613B00F1FD2C19886
-echo deb http://repository.spotify.com stable non-free | sudo tee /etc/apt/sources.list.d/spotify.list
 sudo apt upgrade;
 sudo apt update;
-sudo apt-get install -y screenfetch chromium-browser build-essential nmap spotify-client compizconfig-settings-manager vagrant docker virtualbox openconnect openssh-server p7zip-full pgadmin3 posgresql-client python-pip shutter zenmap nginx git;
-curl -sL https://deb.nodesource.com/setup_6.x -o nodesource_setup.sh;
-sudo bash nodesource_setup.sh
-sudo npm upgrade npm -g
-npm install -g grunt gulp bower yo pm2 http-server jsome eslint npmrc essed;
-wget -qO- https://raw.githubusercontent.com/creationix/nvm/v0.32.0/install.sh | bash;
 
-curl https://raw.githubusercontent.com/LuRsT/hr/master/hr > ~/bin/hr
-chmod +x ~/bin/hr
+sudo apt install curl \
+ jq \
+ zsh \
+ python-dev \
+ ncurses \
+ progress \
+ graphviz \
+ sshd \
+ inotify-tools \
+ screenfetch \
+ chromium-browser \
+ build-essential \
+ nmap \
+ vagrant \
+ docker \
+ virtualbox \
+ p7zip-full \
+ pgadmin3 \
+ posgresql-client \
+ python-pip \
+ shutter \
+ zenmap \
+ nginx \
+ git;
+
+curl -sL https://raw.githubusercontent.com/emericg/OpenSubtitlesDownload/master/OpenSubtitlesDownload.py -o "${HOME}/bin/subtitles";
+curl https://raw.githubusercontent.com/LuRsT/hr/master/hr > "${HOME}/bin/hr"
+
+chmod +x "${HOME}/bin/hr"
+chmod +x "${HOME}/bin/subtitles"
+
+wget -qO- https://raw.githubusercontent.com/creationix/nvm/v0.34.0/install.sh | bash;
+
+cp -n ./.zshrc "${HOME}" || true;
+cp -n ./.gitconfig "${HOME}" || true;
+cp -n ./bin/* "${HOME}/bin" || true;
+
+zsh -c "sudo npm upgrade npm -g"
+zsh -c "npm install -g eslint typescript yarn http-server 0x expo-cli bunyan";
+
+chsh -s $(which zsh)

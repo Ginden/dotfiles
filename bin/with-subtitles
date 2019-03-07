@@ -1,0 +1,41 @@
+#!/usr/bin/env bash
+
+if [ "$1" == "" ]; then
+    echo "Movie file not given";
+    exit 1
+fi
+
+
+LANG=${2:-eng}
+
+MOVIE_FILE=$1
+MOVIE_PATH="$(realpath "$MOVIE_FILE")"
+MOVIE_FILE_NAME="$(basename "$MOVIE_PATH")"
+DIR_PATH="$(dirname "$MOVIE_PATH")";
+
+echo "Downloading subtitles";
+subtitles "$MOVIE_PATH" --lang $LANG -v --gui cli;
+
+unset -v SUBTITLES_PATH
+for file in "$DIR_PATH"/*; do
+  [[ $file -nt $SUBTITLES_PATH ]] && SUBTITLES_PATH=$file
+done
+
+OUTPUT_PATH="${DIR_PATH}/${LANG}.subtitles.${MOVIE_FILE_NAME%.*}.mkv";
+
+echo "";
+
+#OUTPUT_PATH="$(printf '%q' "$OUTPUT_PATH")";
+#SUBTITLES_PATH="$(printf '%q' "$SUBTITLES_PATH")";
+#MOVIE_PATH="$(printf '%q' "$MOVIE_PATH")";
+
+
+FFMPEG_CMD="ffmpeg -i \"${MOVIE_PATH}\" -i \"${SUBTITLES_PATH}\" -c copy -c:s srt \"${OUTPUT_PATH}\"";
+
+echo $FFMPEG_CMD;
+
+rm "$OUTPUT_PATH" || true;
+
+echo "";
+
+eval $FFMPEG_CMD;

@@ -1,0 +1,10 @@
+#!/bin/bash
+
+[ -f ./package.json ] && echo "Package found" || (echo "No package found" && exit 1);
+
+PACK_FILE_NAME=$(npm pack)
+
+tar -tvf $PACK_FILE_NAME
+
+rm $PACK_FILE_NAME 
+

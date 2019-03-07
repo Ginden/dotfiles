@@ -1,0 +1,26 @@
+#!/bin/bash
+
+exit_report(){
+logger "$(date) Lockscreen Monitoring Terminated."
+}
+trap "exit_report; exit;" 0
+
+lockmon() {
+adddate() {
+    while IFS= read -r line; do
+      echo $line | grep string | grep '"start"' -q
+      if [ $? -eq 0 ] ; then
+        logger "$(date) Screen locked"
+      fi
+      echo $line | grep string | grep '"stop"' -q
+      if [ $? -eq 0 ] ; then
+        logger "$(date) Screen unlocked"
+      fi
+    done
+}
+logger "$(date) Lockscreen Monitoring Started."
+dbus-monitor --session "type='signal',interface='com.ubuntu.Upstart0_6.Instance'" | adddate
+}
+
+lockmon
+

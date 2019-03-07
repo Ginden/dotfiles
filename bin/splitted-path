@@ -1,0 +1,5 @@
+#!/usr/bin/env node
+
+const PATH = process.env.PATH;
+
+PATH.split(':').forEach(el => console.log(el));

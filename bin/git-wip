@@ -1,8 +1,0 @@
-#!/bin/bash
-git status;
-git add --all;
-git commit -m "WIP: $(fortune)" --no-verify;
-PREHOOK="$(git root)/.git/hooks/pre-commit"
-set +e;
-sh $PREHOOK;
-set -e;

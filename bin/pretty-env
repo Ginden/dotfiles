@@ -1,0 +1,3 @@
+#!/bin/bash
+
+node -p "JSON.stringify(process.env)" | jq -S .
