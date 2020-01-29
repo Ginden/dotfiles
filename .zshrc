@@ -49,3 +49,6 @@ cd-git-root() {
 export PATH;
 
 export XDG_CACHE_HOME="$HOME/.cache";
+
+alias setclip="xclip -selection c"
+alias getclip="xclip -selection c -o"

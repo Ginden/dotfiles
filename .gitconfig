@@ -6,13 +6,13 @@
 
 [alias]
     all-tags = show-ref --tags
-    authors = !"git log --format='%aN' | sort -u"
     amend = commit -a --amend
+    authors = !"git log --format='%aN' | sort -u"
     branch-name = rev-parse --abbrev-ref HEAD
     branch-status = !"git ifetch >> /dev/null && git branch -v"
     branches = branch -avvl
-    exec = ! exec
     empty-commit="commit --allow-empty"
+    exec = ! exec
     graph = log --graph --abbrev-commit --decorate --date=relative --all
     ifetch = fetch -v --all
     ls = log --pretty=format:"%C(yellow)%h%Cred%d\\ %Creset%s%Cblue\\ [%cn]" --decorate
