@@ -1,0 +1,37 @@
+#!/usr/bin/env bash
+
+set -e;
+
+DOWNLOADS_FOLDER="/mnt/560A5526247851FB/Downloads"
+TIME_TO_OLD="30" # ~ one month
+SIZE_TO_ARCHIVE="4M" # Over 4MB
+MINIMAL_COMPRESSION_RATE="0.05"
+
+find "$DOWNLOADS_FOLDER" -maxdepth 1 -mtime "+$TIME_TO_OLD" -size "+$SIZE_TO_ARCHIVE" -type f | 
+while IFS='' read -r FILE_PATH || [[ -n "$FILE_PATH" ]]; do
+    FILE_INFO=$(file "$FILE_PATH");
+    if echo $FILE_INFO | grep -qv "archive";
+    then
+        if echo $FILE_INFO | grep -qv "compressed";
+        then
+            echo $FILE_INFO
+            TMP_FILE_PATH=$(mktemp);
+            rm "$TMP_FILE_PATH";
+            7z a -m0=lzma2 -mx=9 "$TMP_FILE_PATH" "$FILE_PATH" > /dev/null;
+            ARCHIVE_SIZE=$(stat --printf="%s" "$TMP_FILE_PATH");
+            ORIGINAL_SIZE=$(stat --printf="%s" "$FILE_PATH");
+            WAS_COMPRESSED=$(echo "($ORIGINAL_SIZE-$ARCHIVE_SIZE) > ($ORIGINAL_SIZE * $MINIMAL_COMPRESSION_RATE)" | bc)
+            if [[ "$WAS_COMPRESSED" = '1' ]];
+            then
+                NEW_FILE_PATH="$FILE_PATH.7z";
+                mv "$TMP_FILE_PATH" "$NEW_FILE_PATH"
+                rm "$FILE_PATH"
+                echo "$(echo "($ORIGINAL_SIZE-$ARCHIVE_SIZE)/(1024*1024)" | bc)MB saved";
+            else 
+                echo "Can't compress $FILE_PATH"
+                touch -m $FILE_PATH
+            fi
+            
+        fi
+    fi
+done
