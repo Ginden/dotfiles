@@ -1,0 +1,23 @@
+#!/bin/bash
+
+find -name 'index.ts' -type f |
+   grep -v "node_modules" |
+   xargs -n1 realpath |
+   while IFS= read -r filepath;
+        do
+                echo $filepath;
+                DIRNAME="$(dirname $filepath)";
+                echo $DIRNAME;
+
+                
+                if grep -qv 'export * ' "$filepath"; then
+                     echo "Custom index.ts file: $filepath";
+                else
+                     cd "$DIRNAME" && generate-star-index-ts > /dev/null;
+                     echo "Rewriting $filepath";
+
+                fi;
+
+
+                cd "$CWD";
+        done

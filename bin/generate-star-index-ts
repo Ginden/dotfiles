@@ -1,0 +1,10 @@
+#!/bin/bash
+
+find -name '*.ts' |
+    grep -v "index.ts" |
+    sort |
+    awk '{print substr($0, 1, length($0)-3)}' |
+    awk '{print "export * from \"" $0 "\";"}' |
+    sed "s/\"/'/g" |
+    tee index.ts
+

@@ -1,0 +1,7 @@
+#!/bin/bash
+
+FILE="$(mktemp)"
+
+xclip -selection c -o | jq . > "$FILE";
+< "$FILE" xclip -selection c;
+jq . "$FILE";
