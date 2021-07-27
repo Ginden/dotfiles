@@ -1,0 +1,4 @@
+#!/usr/bin/env bash
+
+
+npm remove "$1" && npm install --save-dev "$1";

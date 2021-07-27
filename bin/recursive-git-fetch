@@ -3,10 +3,10 @@
 function fetch_git {
     local GITDIR="$0";
     cd "$GITDIR";
-    (git puff; git ifetch) || true;
+    (yes | (git puff; git ifetch)) || true;
 }
 export -f fetch_git;
 
 find "$(realpath $1)" -type d -name '.git' -print0 |
     xargs --null -n1 dirname |
-    xargs --no-run-if-empty -P 8 -n1 bash -c 'fetch_git "$@"'
+    xargs --no-run-if-empty -P 8 -n1 bash -l -c 'fetch_git "$@"'

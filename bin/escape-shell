@@ -1,0 +1,12 @@
+#!/bin/env php
+<?php
+
+$str = '';
+
+foreach (array_slice($_SERVER['argv'], 1) as $value) {
+   $escaped = ctype_alnum($value) ? $value : escapeshellarg($value);
+   $str = $str.' '.$escaped;
+}
+
+
+echo trim($str);

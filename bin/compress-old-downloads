@@ -2,7 +2,7 @@
 
 set -e;
 
-DOWNLOADS_FOLDER="/mnt/560A5526247851FB/Downloads"
+DOWNLOADS_FOLDER="/mnt/dysk-d/Downloads"
 TIME_TO_OLD="30" # ~ one month
 SIZE_TO_ARCHIVE="4M" # Over 4MB
 MINIMAL_COMPRESSION_RATE="0.05"
