@@ -2,7 +2,7 @@ export ZSH=/home/ginden/.oh-my-zsh
 
 ZSH_THEME="robbyrussell"
 
-plugins=(git)
+plugins=(git yarn)
 
 source $ZSH/oh-my-zsh.sh
 
@@ -15,7 +15,7 @@ NPM_PACKAGES="${HOME}/.npm-packages"
 unset MANPATH # delete if you already modified MANPATH elsewhere in your config
 export MANPATH="$NPM_PACKAGES/share/man:$(manpath)"
 
-export EDITOR=nano
+export EDITOR="code --wait"
 export NVM_DIR="$HOME/.nvm"
 [ -s "$NVM_DIR/nvm.sh" ] && . "$NVM_DIR/nvm.sh"  # This loads nvm
 alias alert='notify-send --urgency=low -i "$([ $? = 0 ] && echo terminal || echo error)" "$(history|tail -n1|sed -e '\''s/^\s*[0-9]\+\s*//;s/[;&|]\s*alert$//'\'')"'
@@ -35,6 +35,9 @@ PATH="$PYCHARM_PATH:$PATH"
 PATH="$LOCAL_BIN:$PATH"
 
 alias 'bk=cd $OLDPWD'
+alias nano="echo 'Did you mean \`code\`? If not, type \n\\' && escape-shell 'nano'"
+alias "git git"="git"
+alias "git clone git"="git"
 
 beacon() { pwd | tee "$XDG_CACHE_HOME/beacon-dir-$$"}
 return-to-beacon() { 
@@ -46,9 +49,35 @@ cd-git-root() {
    cd "$(git root)"
 }
 
+
 export PATH;
 
 export XDG_CACHE_HOME="$HOME/.cache";
+nvm use 16;
 
 alias setclip="xclip -selection c"
 alias getclip="xclip -selection c -o"
+
+# Node related aliases
+
+alias nid="npm install --save-dev";
+alias nui="npm uninstall";
+alias nu="npm update";
+alias nr="npm run";
+alias naf="npm audit fix";
+alias nt="npm test";
+alias nrs="npm run --silent"
+
+alias nest="npx --no-install nest";
+
+setopt histignorespace
+
+alias disablehistory="function zshaddhistory() {  return 1 }"
+alias enablehistory="unset -f zshaddhistory"
+
+function status_sign() {
+   echo $PROMPT_SIGN;
+}
+
+export PS1="\$(status_sign)$PS1";
+export DOCKER_BUILDKIT=1

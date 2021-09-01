@@ -3,7 +3,7 @@
 function fetch_git {
     local GITDIR="$0";
     cd "$GITDIR";
-    (yes | (git puff; git ifetch)) || true;
+    (yes | (git puff || git ifetch)) || true;
 }
 export -f fetch_git;
 

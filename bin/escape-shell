@@ -3,8 +3,13 @@
 
 $str = '';
 
+function is_shell_safe($val) {
+   return ctype_alnum($val) || preg_match('/^[a-z-0-9_\/]*$/i', $val) === 1;
+}
+
+
 foreach (array_slice($_SERVER['argv'], 1) as $value) {
-   $escaped = ctype_alnum($value) ? $value : escapeshellarg($value);
+   $escaped = is_shell_safe($value) ? $value : escapeshellarg($value);
    $str = $str.' '.$escaped;
 }
 
