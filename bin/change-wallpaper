@@ -1,0 +1,38 @@
+#!/bin/bash
+
+file2url () {
+    python3 -c "import sys, pathlib; print(pathlib.Path(input()).resolve().as_uri())" <<< $1
+}
+
+WALLPAPER_PATH="$HOME/Wallpapers";
+
+find "$WALLPAPER_PATH" -type f -name '*.webp' | xargs -n1 webp-auto
+
+BACKGROUND_PATH="$(find "$WALLPAPER_PATH" -type f '(' -iname '*.png' -or -iname '*.jpg' -or -iname '*.jpeg' ')' | shuf -n1)"
+SCREEN_SAVER_PATH="$(find "$WALLPAPER_PATH" -type f '(' -iname '*.png' -or -iname '*.jpg' -or -iname '*.jpeg' ')' | shuf -n1)"
+LOCK_BACKGROUND_PATH="$(find "$WALLPAPER_PATH" -type f '(' -iname '*.png' -or -iname '*.jpg' -or -iname '*.jpeg' ')' | shuf -n1)"
+
+
+echo $BACKGROUND_PATH
+echo $SCREEN_SAVER_PATH
+echo $LOCK_BACKGROUND_PATH
+
+CORRECT_SIZE_BACKGROUND="$(mktemp).jpg"
+
+convert "$BACKGROUND_PATH" -quality 100 -resize 1920x "$CORRECT_SIZE_BACKGROUND"
+
+CORRECT_SIZE_SCREEN_SAVER="$(mktemp).jpg"
+
+convert "$SCREEN_SAVER_PATH" -quality 100 -resize 1920x "$CORRECT_SIZE_SCREEN_SAVER"
+
+CORRECT_SIZE_LOCK_BACKGROUND="$LOCK_BACKGROUND_PATH"
+
+convert "$LOCK_BACKGROUND_PATH" -quality 100 -resize 1920x "$CORRECT_SIZE_LOCK_BACKGROUND"
+
+
+cp "$CORRECT_SIZE_BACKGROUND" '/usr/share/backgrounds/background.jpg';
+cp "$CORRECT_SIZE_LOCK_BACKGROUND" '/usr/share/backgrounds/lock.jpg';
+cp "$CORRECT_SIZE_SCREEN_SAVER" '/usr/share/backgrounds/screensaver.jpg';
+
+gsettings set org.gnome.desktop.background picture-uri "$(file2url '/usr/share/backgrounds/background.jpg')"
+gsettings set org.gnome.desktop.screensaver picture-uri "$(file2url '/usr/share/backgrounds/screensaver.jpg')"

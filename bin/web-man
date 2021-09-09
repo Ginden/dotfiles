@@ -1,0 +1,16 @@
+#!/bin/bash
+
+set -e;
+
+export UBUNTU_RELEASE="$(lsb_release -cs)"
+
+
+man --all --whatis "$1" |
+    grep --only-matching '^.* ([0-9]*)' |
+    xargs -d '\n' python3 "$(which crontab-to-url.py)" |
+    while IFS="" read -r url;
+    do
+     echo "$url"
+     curl --silent --fail "$url" > /dev/null && firefox --new-tab --detached "$url"
+     
+    done

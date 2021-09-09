@@ -1,13 +1,15 @@
 #!/usr/bin/env bash
 
-HASH=$((cat $0 && dwebp -version) | md5sum)
+#HASH=$((cat $0 && dwebp -version) | md5sum)
 
-HAS_MEMBER=$(redis-cli sismember "$0:$HASH" "$1" | cat);
+#HAS_MEMBER=$(redis-cli sismember "$0:$HASH" "$1" | cat);
+OUTPUT_PATH="$1.png"
 
-if [ $HAS_MEMBER = '0' ];
+if [ ! -f "$OUTPUT_PATH" ];
 then
   echo "Processing file $1";
-  dwebp "$1" -o "$1.png"
+  dwebp "$1" -o "$OUTPUT_PATH"
+
 else
   echo "Skipping file $1";
 fi;
