@@ -1,0 +1,14 @@
+#!/usr/bin/env bash
+
+PREV_HEAD="$1"
+CURR_HEAD="$2"
+
+PREV_LOCK_HASH=$(git show "$PREV_HEAD:package-lock.json" | sha1sum);
+NEW_LOCK_HASH=$(git show "$CURR_HEAD:package-lock.json" | sha1sum);
+
+if [ "$NEW_LOCK_HASH" == "$PREV_LOCK_HASH" ]; then
+    echo 'package-lock.json not changed';
+    exit 0;
+else
+    npm ci;
+fi

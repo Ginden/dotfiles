@@ -1,4 +1,5 @@
 #!/usr/bin/env bash
 
+set +x;
 
-npm remove $* && npm install $*;
+npm ci && npm uninstall --save "$@" && npm dedupe && npm install --save "$@";

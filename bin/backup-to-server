@@ -1,0 +1,7 @@
+#!/bin/bash
+
+set -e;
+
+mountpoint /backup-local;
+
+rsync --link-dest=/backup -ahv --progress /backup-local -e ssh ginden@nuc-szafka.local:/backup

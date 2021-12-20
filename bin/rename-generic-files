@@ -1,0 +1,74 @@
+#!/usr/bin/env node
+
+const {readdir} = require('fs/promises');
+const { resolve, basename, dirname, extname, join } = require('path');
+
+async function* getFiles(dir) {
+  const dirents = await readdir(dir, { withFileTypes: true });
+  for (const dirent of dirents) {
+    const res = resolve(dir, dirent.name);
+    if (dirent.isDirectory()) {
+      yield* getFiles(res);
+    } else {
+      yield res;
+    }
+  }
+}
+
+const [,, dir] = process.argv;
+
+const {statSync, realpathSync, rename, renameSync} = require('fs');
+const { randomBytes } = require('crypto');
+const { spawnSync } = require('child_process');
+
+
+function requireRename(file) {
+    const base = basename(file);
+    if (base.startsWith('Image from iOS')) {
+        return true;
+    }
+    if (base.match(/image \(\d*\)/)) {
+        return true;
+    }
+    return false;
+}
+
+function isAlpha(str) {
+    return /^[a-z]+$/.test(str);
+}
+
+function renameGeneric(filePath) {
+    const dir = dirname(filePath);
+    const extension = extname(filePath);
+    let newName = randomBytes(16).toString('hex');
+    const ocr = spawnSync('tesseract', [filePath, '-'], {encoding: 'utf8'}).stdout;
+    const words = ocr.split(/\s+/).filter(Boolean).filter(isAlpha);
+    if (words.length > 3 && words.join('').length > 10) {
+        newName =  words.join('_').slice(0, 20).concat(randomBytes(2).toString('hex'));
+    }
+
+    const newPath = join(dir, `${newName}${extension}`);
+    renameSync(filePath, newPath);
+}
+
+
+(async () => {
+    if (!(statSync(dir)).isDirectory()) {
+        throw new Error(`${dir} is not a directory`);
+    }
+
+    const dirRealpath = realpathSync(dir);
+
+    const files = [];
+    for await(const file of getFiles(dir)) {
+        if (requireRename(file))
+        files.push(file);
+    }
+    for(const file of files) {
+        await renameGeneric(file);
+    }
+})().then(() => process.exit(0)).catch(e => {
+    setImmediate(() => {
+        throw e;
+    });
+});

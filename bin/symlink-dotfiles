@@ -1,5 +1,9 @@
 #!/bin/env bash
 
+red=$(tput setaf 1)
+green=$(tput setaf 2)
+reset=$(tput sgr0)
+
 DOTFILES_BIN_PATH="$1/";
 HOME_BIN_PATH="$2/";
 echo "HOME_BIN_PATH = $HOME_BIN_PATH";
@@ -8,25 +12,22 @@ echo "DOTFILES_BIN_PATH = $DOTFILES_BIN_PATH";
 find "$DOTFILES_BIN_PATH" -maxdepth 1 -executable -type f -print0 | while IFS= read -r -d $'\0' file; do
     SOURCE_PATH="$(realpath "$file")"
     FILE_BASENAME="$(basename "$SOURCE_PATH")";
-    TARGET_PATH="$HOME_BIN_PATH//$FILE_BASENAME";
-    echo "Operating on $FILE_BASENAME";
-
+    TARGET_PATH="$HOME_BIN_PATH/$FILE_BASENAME";
     if [ -L "$TARGET_PATH" ]; then
         echo "$TARGET_PATH is symbolic link - ignoring";
     elif [ -f "$TARGET_PATH" ]; then
         echo "$TARGET_PATH is regular file";
         if cmp --silent "$TARGET_PATH" "$SOURCE_PATH"; then
-            echo "File $TARGET_PATH are identical - replacing with symlink";
+            echo "File $TARGET_PATH are identical -$green replacing with symlink $reset";
             rm "$TARGET_PATH";
             ln -s "$SOURCE_PATH" "$TARGET_PATH";
         else
-            echo "Files $SOURCE_PATH and $TARGET_PATH are not identical. Skipping!";
+            echo "Files $SOURCE_PATH and $TARGET_PATH are not identical.$red Skipping!$reset";
         fi
     
     elif [ ! -e "$TARGET_PATH" ]; then
-        echo "File $TARGET_PATH not found - creating symlink";
+        echo "File $TARGET_PATH not found -$green creating symlink $reset";
         ln -s "$SOURCE_PATH" "$TARGET_PATH";
     fi
 
-    echo '';
 done
