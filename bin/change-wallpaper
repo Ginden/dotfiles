@@ -36,5 +36,8 @@ cp "$CORRECT_SIZE_BACKGROUND" '/usr/share/backgrounds/background.jpg';
 cp "$CORRECT_SIZE_LOCK_BACKGROUND" '/usr/share/backgrounds/lock.jpg';
 cp "$CORRECT_SIZE_SCREEN_SAVER" '/usr/share/backgrounds/screensaver.jpg';
 
-gsettings set org.gnome.desktop.background picture-uri "$(file2url '/usr/share/backgrounds/background.jpg')"
+echo 'Changing wallpaper'
+gsettings set org.gnome.desktop.background picture-uri-dark "$(file2url '/usr/share/backgrounds/background.jpg')"
+
+echo 'Changing lock screen'
 gsettings set org.gnome.desktop.screensaver picture-uri "$(file2url '/usr/share/backgrounds/screensaver.jpg')"

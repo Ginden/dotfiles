@@ -15,7 +15,7 @@ async function* getFiles(dir) {
   }
 }
 
-const [,, dir] = process.argv;
+const [,, ...dirs] = process.argv;
 
 const {statSync, realpathSync, rename, renameSync} = require('fs');
 const { randomBytes } = require('crypto');
@@ -27,14 +27,31 @@ function requireRename(file) {
     if (base.startsWith('Image from iOS')) {
         return true;
     }
-    if (base.match(/image \(\d*\)/)) {
+    if (base.match(/^image \(\d*\)/)) {
+        return true;
+    }
+    if (base.match(/^image\(\d*\)\./i)) {
+        return true;
+    }
+    if (base.startsWith('maxresdefault')) {
+        return true;
+    }
+    if (base.match(/^\d+_\d+_\d+_n/i)) {
+        return true;
+    }
+    if (base.match(/^\d+\.[a-z]+/i)) {
+        const [potentialUnixTimestamp] = base.split('.');
+        const date = Number(new Date(Number(potentialUnixTimestamp)));
+        if (date > Number(new Date('2010-01-01'))) {
+            return false;
+        }
         return true;
     }
     return false;
 }
 
 function isAlpha(str) {
-    return /^[a-z]+$/.test(str);
+    return /^[a-z0-9]+$/.test(str);
 }
 
 function renameGeneric(filePath) {
@@ -44,28 +61,31 @@ function renameGeneric(filePath) {
     const ocr = spawnSync('tesseract', [filePath, '-'], {encoding: 'utf8'}).stdout;
     const words = ocr.split(/\s+/).filter(Boolean).filter(isAlpha);
     if (words.length > 3 && words.join('').length > 10) {
-        newName =  words.join('_').slice(0, 20).concat(randomBytes(2).toString('hex'));
+        newName =  words.join('_').slice(0, 20).concat('_', randomBytes(2).toString('hex'));
     }
 
     const newPath = join(dir, `${newName}${extension}`);
+    console.log(`Renaming ${filePath} to ${newPath}`);
     renameSync(filePath, newPath);
 }
 
 
 (async () => {
-    if (!(statSync(dir)).isDirectory()) {
-        throw new Error(`${dir} is not a directory`);
-    }
-
-    const dirRealpath = realpathSync(dir);
-
-    const files = [];
-    for await(const file of getFiles(dir)) {
-        if (requireRename(file))
-        files.push(file);
-    }
-    for(const file of files) {
-        await renameGeneric(file);
+    for (const dir of dirs) {
+        if (!(statSync(dir)).isDirectory()) {
+            throw new Error(`${dir} is not a directory`);
+        }
+    
+        const dirRealpath = realpathSync(dir);
+    
+        const files = [];
+        for await(const file of getFiles(dir)) {
+            if (requireRename(file))
+            files.push(file);
+        }
+        for(const file of files) {
+            await renameGeneric(file);
+        }
     }
 })().then(() => process.exit(0)).catch(e => {
     setImmediate(() => {

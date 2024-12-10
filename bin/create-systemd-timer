@@ -1,0 +1,85 @@
+#!/bin/bash
+
+# Ensure a job name argument is provided
+if [ -z "$1" ]; then
+  echo "Usage: $0 <job_name>"
+  exit 1
+fi
+
+# Prefix and base directory for draft files
+PREFIX="job_"
+BASE_DIR="$HOME/systemd-cron-drafts"
+job_name="${PREFIX}$1"
+job_dir="$BASE_DIR/$job_name"
+mkdir -p "$job_dir"
+
+# Paths to the draft files
+service_file="$job_dir/$job_name.service"
+timer_file="$job_dir/$job_name.timer"
+script_file="$job_dir/$job_name.sh"
+
+# Create the shell script draft
+cat <<EOL > "$script_file"
+#!/bin/bash
+set -e
+
+# Example script contents
+echo "Running $job_name script"
+EOL
+chmod +x "$script_file"
+
+# Create the service file draft
+cat <<EOL > "$service_file"
+[Unit]
+Description=Service for $job_name
+
+[Service]
+Type=oneshot
+ExecStart=$script_file
+EOL
+
+# Create the timer file draft
+cat <<EOL > "$timer_file"
+[Unit]
+Description=Timer for $job_name
+
+[Timer]
+OnCalendar=*-*-* *:*:00
+Persistent=true
+
+[Install]
+WantedBy=timers.target
+EOL
+
+# Output the location of generated files
+echo "Draft files created for $job_name:"
+echo " - Service file: $service_file"
+echo " - Timer file:   $timer_file"
+echo " - Script file:  $script_file"
+
+# Instructions for making the timer permanent
+cat <<EOL
+
+### To make this timer permanent:
+1. Move the .service and .timer files to the systemd user directory (for user-level timers) or system directory (for system-wide):
+     - User-level:   mkdir -p ~/.config/systemd/user/
+                     mv "$service_file" "$timer_file" ~/.config/systemd/user/
+     - System-wide:  sudo mv "$service_file" "$timer_file" /etc/systemd/system/
+
+2. Reload systemd to register the new unit files:
+     - User-level:   systemctl --user daemon-reload
+     - System-wide:  sudo systemctl daemon-reload
+
+3. Enable and start the timer:
+     - User-level:   systemctl --user enable --now $job_name.timer
+     - System-wide:  sudo systemctl enable --now $job_name.timer
+
+To check the status of the timer:
+     - User-level:   systemctl --user status $job_name.timer
+     - System-wide:  sudo systemctl status $job_name.timer
+
+To see the last run time and next run time:
+     - User-level:   systemctl --user list-timers $job_name.timer
+     - System-wide:  sudo systemctl list-timers $job_name.timer
+
+EOL

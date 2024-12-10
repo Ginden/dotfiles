@@ -8,7 +8,7 @@ do
     echo $line;
     cd $line;
     cd ..;
-    git puff-all | grep -v "up to date";
+    git puff | grep -v "up to date";
 done
 
 # COMMANDS=$(echo $GIT_DIRS | sed 's/^/(cd /' | sed 's/$/ \&\& cd .. \&\& git puff-all);/')

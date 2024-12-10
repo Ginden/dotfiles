@@ -1,0 +1,26 @@
+#!/bin/bash
+
+# Fetch the latest changes from the remote
+git fetch --prune
+
+# Get a list of all local branches
+branches=$(git branch -vv | awk '/: gone]/ {print $1}')
+
+if [ -z "$branches" ]; then
+  echo "No local branches with deleted upstream found."
+  exit 0
+fi
+
+echo "The following branches have no upstream and will be deleted:"
+echo "$branches"
+
+# Confirm deletion
+read -p "Are you sure you want to delete these branches? (y/n) " confirm
+if [[ "$confirm" =~ ^[Yy]$ ]]; then
+  for branch in $branches; do
+    git branch -D "$branch"
+  done
+else
+  echo "Operation cancelled."
+  exit 0
+fi
